@@ -1,9 +1,10 @@
+import pygame
 from pygame.locals import (
         K_UP,
         K_DOWN,
         K_LEFT,
         K_RIGHT,
-        K_i, K_j, K_k, K_l,
+        K_i, K_j, K_k, K_l, K_p,
         K_BACKSPACE, K_SPACE,
         K_ESCAPE,
         KEYDOWN,
@@ -42,3 +43,15 @@ def increase_rect(rect, deltaW, deltaH):
     newRect = [newX, newY, newW, newH];
     return newRect;
 
+class Timer:
+    def __init__(self):
+        self.start = 0
+        self.end = 0
+        self.running = False
+
+    def start_timer(self):
+        self.start = pygame.time.get_ticks()
+    
+    def get_elapsed(self):
+        self.end = (pygame.time.get_ticks() - self.start) / 1000
+        return self.end
