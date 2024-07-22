@@ -31,6 +31,8 @@ class Player:
         self.previousY = self.currentY
         self.color = color
         self.image = image
+        self.mal = False
+        self.timer2 = Timer()
         self.name = name
         self.spells = Card.shuffle_3()
         self.attacks1 = []

@@ -76,6 +76,24 @@ font_smooth.c2 = [0, 0]
 font_smooth.pr1 = [0, 0]
 font_smooth.pr2 = [0, 0]
 
+def check_dmg(player):
+
+    if player[1].attacks2 and player[0].mal == False:
+        for i in range(len(player[1].attacks2[0].position)):
+            if player[0].x == player[1].attacks2[0].position[i][0] and player[0].y == player[1].attacks2[0].position[i][1]:
+                player[0].health = player[0].health - player[1].attacks2[0].damage
+                print(f"{player[0].id} {player[0].health}pv")
+                player[0].mal = True
+                player[0].timer2.start_timer()
+
+    if player[0].attacks1 and player[1].mal == False:
+        for i in range(len(player[0].attacks1[0].position)):
+            if player[1].x == player[0].attacks1[0].position[i][0] and player[1].y == player[0].attacks1[0].position[i][1]:
+                player[1].health = player[1].health - player[0].attacks1[0].damage
+                print(f"{player[1].id} {player[1].health}pv")
+                player[1].mal = True
+                player[1].timer2.start_timer()
+
 def mymain():
     pygame.init()
     pygame.font.init()
@@ -105,7 +123,10 @@ def mymain():
         players[1].draw_atk(app.grid)
         players[0].draw(app.grid)
         players[1].draw(app.grid)
-
+        check_dmg(players)
+        for player in players:
+            if player.timer2.get_elapsed() >= 0.5:
+                player.mal = False
         # displays the "P1" "P2" right above the players
         font_smooth(app.screen, players, smooth, surface)
 
