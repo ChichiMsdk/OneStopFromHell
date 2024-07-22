@@ -21,10 +21,11 @@ def check_p2(x, nb):
     return x
 
 class Player:
-    def __init__(self, position, color, keys, fn_check, limit, image, name, id):
+    def __init__(self, position, color, keys, fn_check, limit, image, name, id, anims):
         self.id = id
         self.x = position[0]
         self.y = position[1]
+        self.c= 0
         self.currentX = self.x
         self.currentY = self.y
         self.previousX = self.currentX
@@ -33,6 +34,8 @@ class Player:
         self.image = image
         self.mal = False
         self.timer2 = Timer()
+        self.timer3 = Timer()
+        self.anims = anims
         self.name = name
         self.spells = Card.shuffle_3()
         self.attacks1 = []
@@ -53,22 +56,36 @@ class Player:
             if len(self.attacks1) != 0:
                 for atk in self.attacks1:
                     for pos in atk.position:
-                        pygame.draw.rect(grid.screen, RED, pygame.Rect([pos[0], pos[1]], [100, 100]))
+                        # pygame.draw.rect(grid.screen, RED, pygame.Rect([pos[0], pos[1]], [100, 100]))
+                        grid.screen.blit(self.anims[self.c], (pos[0] + 20, pos[1] + 20))
+                        if atk.timer2.get_elapsed() >= 0.1:
+                            self.c = self.c + 1
+                            if self.c > 6:
+                                self.c = 0
+                            atk.timer2.start_timer()
 
                     if atk.timer.get_elapsed() >= 0.5:
                         # self.attacks1.remove(atk)
                         del self.attacks1[0]
                         self.attacking = False
+                        self.c = 0
         else:
             if len(self.attacks2) != 0:
                 for atk in self.attacks2:
                     for pos in atk.position:
-                        pygame.draw.rect(grid.screen, GREEN, pygame.Rect([pos[0], pos[1]], [100, 100]))
+                        # pygame.draw.rect(grid.screen, GREEN, pygame.Rect([pos[0], pos[1]], [100, 100]))
+                        grid.screen.blit(self.anims[self.c], (pos[0] + 20, pos[1] + 20))
+                        if atk.timer2.get_elapsed() >= 0.1:
+                            self.c = self.c + 1
+                            if self.c > 6:
+                                self.c = 0
+                            atk.timer2.start_timer()
 
                 if atk.timer.get_elapsed() >= 0.5:
                     # self.attacks2.remove(atk)
                     del self.attacks2[0]
                     self.attacking = False
+                    self.c = 0
 
     def draw(self, grid):
         a = 3 # adjust the rect inside the grid
@@ -126,6 +143,7 @@ class Mapping:
                     elems.append([atk1[0], atk1[1]])
                 spell_chosen.position = elems.copy()
                 spell_chosen.timer.start_timer()
+                spell_chosen.timer2.start_timer()
                 player.attacks1.append(spell_chosen)
             else:
                 spell_chosen2 = copy.deepcopy(random.choice(player.spells))
@@ -137,6 +155,7 @@ class Mapping:
                     elems2.append([atk2[0], atk2[1]])
                 spell_chosen2.position = elems2.copy()
                 spell_chosen2.timer.start_timer()
+                spell_chosen2.timer2.start_timer()
                 player.attacks2.append(spell_chosen2)
             
             player.attacking = True

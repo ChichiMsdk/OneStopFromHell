@@ -107,6 +107,8 @@ def draw_health_bar(screen, pos, current_health):
     pygame.draw.rect(screen, RED, (pos[0], pos[1], HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT))
     pygame.draw.rect(screen, GREEN, (pos[0], pos[1], health_bar_width, HEALTH_BAR_HEIGHT))
 
+BLEU = (0, 128, 128)
+
 def mymain():
     pygame.init()
     pygame.font.init()
@@ -119,8 +121,24 @@ def mymain():
     key_p2 = [K_i, K_k, K_j, K_l, K_p]
     str_p = ["P1", "P2"]
 
-    players = [Player([int(0), int(500)], RED, key_p1, check_p1, [400, 0], sala_png, str_p[0], 0),
-               Player([int(900), int(500)], GREEN, key_p2, check_p2, [500, 900], goinfrex_png, str_p[1], 1)]
+    anim1 = pygame.image.load('./image/atk1-19-22.png')
+    anim2 = pygame.image.load('./image/atk2-27-29.png')
+    anim3 = pygame.image.load('./image/atk3-38-38.png')
+    anim4 = pygame.image.load('./image/atk4-47-52.png')
+    anim5 = pygame.image.load('./image/atk5-57-54.png')
+    anim6 = pygame.image.load('./image/atk6-58-58.png')
+    anim7 = pygame.image.load('./image/atk7-61-43.png')
+    anim1.set_colorkey(BLEU)
+    anim2.set_colorkey(BLEU)
+    anim3.set_colorkey(BLEU)
+    anim4.set_colorkey(BLEU)
+    anim5.set_colorkey(BLEU)
+    anim6.set_colorkey(BLEU)
+    anim7.set_colorkey(BLEU)
+    anims = [anim1, anim2, anim3, anim4, anim5, anim6, anim7]
+
+    players = [Player([int(0), int(500)], RED, key_p1, check_p1, [400, 0], sala_png, str_p[0], 0, anims),
+               Player([int(900), int(500)], GREEN, key_p2, check_p2, [500, 900], goinfrex_png, str_p[1], 1, anims)]
 
     surface = [pygame.font.Font.render(font, str_p[0], True, BLACK),
                pygame.font.Font.render(font, str_p[1], True, BLACK)]
@@ -133,10 +151,10 @@ def mymain():
         app.screen.fill((255, 255, 255))
 
         app.grid.draw(app.screen)
-        players[0].draw_atk(app.grid)
-        players[1].draw_atk(app.grid)
         players[0].draw(app.grid)
         players[1].draw(app.grid)
+        players[0].draw_atk(app.grid)
+        players[1].draw_atk(app.grid)
         check_dmg(players)
         for player in players:
             if player.timer2.get_elapsed() >= 0.5:

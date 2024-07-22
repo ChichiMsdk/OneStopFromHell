@@ -14,6 +14,7 @@ class Card:
         self.position = position
         self.duration = duration
         self.timer = Timer()
+        self.timer2 = Timer()
         Card.list_spells.append(self)
 
     @staticmethod
