@@ -1,5 +1,6 @@
 from player import *
 from spritesheet import *
+from spritesheets import *
 import time
 
 CLOCK = pygame.time.Clock()
@@ -60,6 +61,7 @@ def font_smooth(screen, players, smooth, surface):
         font_smooth.c1[1] = interpolate(font_smooth.pr1[1], fonty, smooth)
         screen.blit(surface[0], (font_smooth.c1[0], font_smooth.c1[1]))
         font_smooth.pr1 = font_smooth.c1
+        draw_health_bar(screen, [font_smooth.c1[0] - 25, font_smooth.c1[1] + 30], players[0].health)
 
         fontx = players[1].currentX + 25
         fonty = players[1].currentY - 35
@@ -69,6 +71,7 @@ def font_smooth(screen, players, smooth, surface):
         font_smooth.c2[1] = interpolate(font_smooth.pr2[1], fonty, smooth)
         screen.blit(surface[1], (font_smooth.c2[0], font_smooth.c2[1]))
         font_smooth.pr2 = font_smooth.c2
+        draw_health_bar(screen, [font_smooth.c2[0] - 25, font_smooth.c2[1] + 30], players[1].health)
 
 # dogshit python won't allow me to have static variables otherwise
 font_smooth.c1 = [0, 0]
@@ -94,6 +97,16 @@ def check_dmg(player):
                 player[1].mal = True
                 player[1].timer2.start_timer()
 
+HEALTH_BAR_WIDTH = 100
+HEALTH_BAR_HEIGHT = 10
+MAX_HEALTH = 100
+
+def draw_health_bar(screen, pos, current_health):
+    health_ratio = current_health / MAX_HEALTH
+    health_bar_width = HEALTH_BAR_WIDTH * health_ratio
+    pygame.draw.rect(screen, RED, (pos[0], pos[1], HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT))
+    pygame.draw.rect(screen, GREEN, (pos[0], pos[1], health_bar_width, HEALTH_BAR_HEIGHT))
+
 def mymain():
     pygame.init()
     pygame.font.init()
@@ -111,6 +124,7 @@ def mymain():
 
     surface = [pygame.font.Font.render(font, str_p[0], True, BLACK),
                pygame.font.Font.render(font, str_p[1], True, BLACK)]
+
 
     smooth = 0.08
     while RUNNING:
