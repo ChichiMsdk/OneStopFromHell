@@ -1,5 +1,7 @@
 import pygame
+import random
 from utils import *
+from card import *
 
 # checks to prevent players to go out of bounds
 # p1 = player1
@@ -42,6 +44,7 @@ class Player:
         self.color = color
         self.image = image
         self.name = name
+        self.spells = Card.shuffle_3()
         self.attacks = []
         self.attacking = False
         
@@ -101,13 +104,26 @@ class Mapping:
 
 #TODO: use attacks as entity that will hold their own start/end distance etc so its easier
     def attack(self, player):
+        spell_chosen = random.choice(player.spells)
+        spell_pos = spell_chosen.position
+        attack_pos = []
         if not player.attacking == True:
             if player.id == 0:
-                x = player.x + 100
+                for el in spell_pos:
+                    x = player.x + el[0]
+                    y = player.y + el[1]
+                    attack_pos.append([x,y])
             else:
-                x = player.x - 100
-            y = player.y
-            player.attacks.append([x, y])
+                for el in spell_pos:
+                    x = player.x - el[0]
+                    y = player.y - el[1]
+                    attack_pos.append([x,y])
+            
+            player.attacks.append(attack_pos)
             player.timer.start_timer()
             player.attacking = True
             print(f"Player {player.name} attacks here -> x:{x} y:{y}")
+        
+
+
+
