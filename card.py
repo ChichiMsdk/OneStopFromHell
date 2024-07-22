@@ -1,16 +1,18 @@
 #%%
 import random
+from utils import *
 #pv : max 100 (spell max : 30)
 #pa : max 10 
 
 class Card:
     list_spells = []
 
-    def __init__(self, name, pa, damage = 0, position = 0):
+    def __init__(self, name, pa, damage = 0, position = 0, timer = 0.5):
         self.name = name
         self.pa = pa
         self.damage = damage
         self.position = position
+        self.timer = timer
         Card.list_spells.append(self)
 
     @staticmethod

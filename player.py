@@ -47,6 +47,7 @@ class Player:
         self.spells = Card.shuffle_3()
         self.attacks = []
         self.attacking = False
+        self.pa = 100
         
         self.timer = Timer()
         # this is for the player to never cross the middle
@@ -60,11 +61,13 @@ class Player:
         a = 3 # adjust the rect inside the grid
         # smooth transitions
         if self.attacks:
-            pygame.draw.rect(grid.screen, RED, pygame.Rect(self.attacks[0], [100, 100]))
+            for atk in self.attacks:
+                for pos in atk.position:
+                    pygame.draw.rect(grid.screen, RED, pygame.Rect([pos[0], pos[1]], [100, 100]))
 
-            if self.timer.get_elapsed() >= 0.5:
-                del self.attacks[0]
-                self.attacking = False
+                if self.attacks.timer.get_elapsed() >= 0.5:
+                    del self.attacks[0]
+                    self.attacking = False
 
         self.currentX = interpolate(self.previousX, self.x, 0.1)
         self.currentY = interpolate(self.previousY, self.y, 0.1)
@@ -102,28 +105,26 @@ class Mapping:
         player.x = player.x + 100
         player.x = player.check(player.x, player.limit)
 
-#TODO: use attacks as entity that will hold their own start/end distance etc so its easier
     def attack(self, player):
         spell_chosen = random.choice(player.spells)
         spell_pos = spell_chosen.position
-        attack_pos = []
+        elems = []
         if not player.attacking == True:
             if player.id == 0:
                 for el in spell_pos:
-                    x = player.x + el[0]
-                    y = player.y + el[1]
-                    attack_pos.append([x,y])
+                    el[0] = player.x + el[0]
+                    el[1] = player.y + el[1]
+                    elems.append(el)
+                spell_chosen.position = elems
+                spell_chosen.start_timer()
+                player.attacks.append(spell_chosen)
             else:
                 for el in spell_pos:
-                    x = player.x - el[0]
-                    y = player.y - el[1]
-                    attack_pos.append([x,y])
+                    el[0] = player.x - el[0]
+                    el[1] = player.y - el[1]
+                    elems.append(el)
+                spell_chosen.position = elems
+                spell_chosen.start_timer()
+                player.attacks.append(spell_chosen)
             
-            player.attacks.append(attack_pos)
-            player.timer.start_timer()
             player.attacking = True
-            print(f"Player {player.name} attacks here -> x:{x} y:{y}")
-        
-
-
-
