@@ -84,8 +84,8 @@ def mymain():
     pygame.display.set_caption("One Step From Hell")
 
 
-    key_p1 = [K_UP, K_DOWN, K_LEFT, K_RIGHT, K_BACKSPACE]
-    key_p2 = [K_i, K_k, K_j, K_l, K_SPACE]
+    key_p1 = [K_UP, K_DOWN, K_LEFT, K_RIGHT, K_SPACE]
+    key_p2 = [K_i, K_k, K_j, K_l, K_p]
     str_p = ["P1", "P2"]
 
     players = [Player([int(0), int(500)], RED, key_p1, check_p1, [400, 0], sala_png, str_p[0], 0),
@@ -101,6 +101,8 @@ def mymain():
         app.screen.fill((255, 255, 255))
 
         app.grid.draw(app.screen)
+        players[0].draw_atk(app.grid)
+        players[1].draw_atk(app.grid)
         players[0].draw(app.grid)
         players[1].draw(app.grid)
 

@@ -1,3 +1,4 @@
+import copy
 import pygame
 import random
 from utils import *
@@ -19,19 +20,6 @@ def check_p2(x, nb):
         return nb[1]
     return x
 
-class Timer:
-    def __init__(self):
-        self.start = 0
-        self.end = 0
-        self.running = False
-
-    def start_timer(self):
-        self.start = pygame.time.get_ticks()
-    
-    def get_elapsed(self):
-        self.end = (pygame.time.get_ticks() - self.start) / 1000
-        return self.end
-
 class Player:
     def __init__(self, position, color, keys, fn_check, limit, image, name, id):
         self.id = id
@@ -45,7 +33,8 @@ class Player:
         self.image = image
         self.name = name
         self.spells = Card.shuffle_3()
-        self.attacks = []
+        self.attacks1 = []
+        self.attacks2 = []
         self.attacking = False
         self.pa = 100
         
@@ -57,18 +46,30 @@ class Player:
         self.health = 100
         self.mapping = Mapping(keys)
 
-    def draw(self, grid):
-        a = 3 # adjust the rect inside the grid
-        # smooth transitions
-        if self.attacks:
-            for atk in self.attacks:
-                for pos in atk.position:
-                    pygame.draw.rect(grid.screen, RED, pygame.Rect([pos[0], pos[1]], [100, 100]))
+    def draw_atk(self, grid):
+        if self.id == 0:
+            if len(self.attacks1) != 0:
+                for atk in self.attacks1:
+                    for pos in atk.position:
+                        pygame.draw.rect(grid.screen, RED, pygame.Rect([pos[0], pos[1]], [100, 100]))
 
-                if self.attacks.timer.get_elapsed() >= 0.5:
-                    del self.attacks[0]
+                    if atk.timer.get_elapsed() >= 0.5:
+                        # self.attacks1.remove(atk)
+                        del self.attacks1[0]
+                        self.attacking = False
+        else:
+            if len(self.attacks2) != 0:
+                for atk in self.attacks2:
+                    for pos in atk.position:
+                        pygame.draw.rect(grid.screen, GREEN, pygame.Rect([pos[0], pos[1]], [100, 100]))
+
+                if atk.timer.get_elapsed() >= 0.5:
+                    # self.attacks2.remove(atk)
+                    del self.attacks2[0]
                     self.attacking = False
 
+    def draw(self, grid):
+        a = 3 # adjust the rect inside the grid
         self.currentX = interpolate(self.previousX, self.x, 0.1)
         self.currentY = interpolate(self.previousY, self.y, 0.1)
         self.previousX = self.currentX
@@ -106,25 +107,34 @@ class Mapping:
         player.x = player.check(player.x, player.limit)
 
     def attack(self, player):
-        spell_chosen = random.choice(player.spells)
-        spell_pos = spell_chosen.position
+        # spell_chosen = copy.deepcopy(random.choice(player.spells))
+        # spell_chosen2 = copy.deepcopy(random.choice(player.spells))
+
         elems = []
+        elems2 = []
         if not player.attacking == True:
             if player.id == 0:
-                for el in spell_pos:
-                    el[0] = player.x + el[0]
-                    el[1] = player.y + el[1]
-                    elems.append(el)
-                spell_chosen.position = elems
-                spell_chosen.start_timer()
-                player.attacks.append(spell_chosen)
+                # spell_chosen = copy.deepcopy(ice_throw)
+                spell_chosen = copy.deepcopy(random.choice(player.spells))
+                spell_pos = spell_chosen.position
+                atk1 = [None] * 2
+                for i in range(len(spell_pos)):
+                    atk1[0] = player.x + spell_pos[i][0]
+                    atk1[1] = player.y + spell_pos[i][1]
+                    elems.append([atk1[0], atk1[1]])
+                spell_chosen.position = elems.copy()
+                spell_chosen.timer.start_timer()
+                player.attacks1.append(spell_chosen)
             else:
-                for el in spell_pos:
-                    el[0] = player.x - el[0]
-                    el[1] = player.y - el[1]
-                    elems.append(el)
-                spell_chosen.position = elems
-                spell_chosen.start_timer()
-                player.attacks.append(spell_chosen)
+                spell_chosen2 = copy.deepcopy(random.choice(player.spells))
+                spell_pos2 = spell_chosen2.position
+                atk2 = [None] * 2
+                for i in range(len(spell_pos2)):
+                    atk2[0] = player.x - spell_pos2[i][0]
+                    atk2[1] = player.y - spell_pos2[i][1]
+                    elems2.append([atk2[0], atk2[1]])
+                spell_chosen2.position = elems2.copy()
+                spell_chosen2.timer.start_timer()
+                player.attacks2.append(spell_chosen2)
             
             player.attacking = True
